@@ -36,8 +36,8 @@ export default function (plop: NodePlopAPI) {
       {
         type: 'append',
         path: 'apps/api/src/app/app.module.ts',
-        pattern: /;\s*$/,
-        template: '\n  .use({{pascalCase name}}Controller)',
+        pattern: /(?=;\s*$)/,
+        template: '  .use({{pascalCase name}}Controller)',
       },
     ],
   });
@@ -84,7 +84,7 @@ export default function (plop: NodePlopAPI) {
       {
         type: 'append',
         path: 'apps/api/src/{{kebabCase name}}/{{kebabCase name}}.controller.ts',
-        pattern: /;\s*$/,
+        pattern: /(?=;\s*$)/,
         templateFile: '.plop/endpoint/controller.hbs',
       },
     ],
