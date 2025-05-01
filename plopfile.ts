@@ -97,46 +97,50 @@ export default function (plop: NodePlopAPI) {
 
   plop.setGenerator('endpoint', {
     description: 'api endpoint boilerplate',
-    prompts: [
-      {
-        type: 'input',
-        name: 'name',
-        message: 'resource name',
-      },
-      {
-        type: 'list',
-        name: 'method',
-        message: 'http method',
-        choices: [
-          'get',
-          'put',
-          'post',
-          'head',
-          'patch',
-          'trace',
-          'delete',
-          'connect',
-          'options',
-        ],
-      },
-      {
-        type: 'input',
-        name: 'path',
-        message: 'endpoint path',
-        default: '/',
-      },
-    ],
+    prompts: async (inquirer) => {
+      const controllers = await fg.glob('**/*.controller.ts', {
+        cwd: path.join(__dirname, 'apps/api/src'),
+      });
+
+      return inquirer.prompt<{
+        controller: string;
+        method: string;
+        path: string;
+      }>([
+        {
+          type: 'list',
+          name: 'controller',
+          message: 'inject service into this controller',
+          choices: controllers,
+        },
+        {
+          type: 'list',
+          name: 'method',
+          message: 'http method',
+          choices: [
+            'get',
+            'put',
+            'post',
+            'head',
+            'patch',
+            'trace',
+            'delete',
+            'connect',
+            'options',
+          ],
+        },
+        {
+          type: 'input',
+          name: 'path',
+          message: 'endpoint path',
+          default: '/',
+        },
+      ]);
+    },
     actions: [
       {
-        type: 'modify',
-        path: 'apps/api/src/{{kebabCase name}}/{{kebabCase name}}.controller.ts',
-        pattern: /^/,
-        template:
-          "import { {{pascalCase name}}DTO } from '@api/{{kebabCase name}}/data/{{kebabCase name}}.dto';\n",
-      },
-      {
         type: 'append',
-        path: 'apps/api/src/{{kebabCase name}}/{{kebabCase name}}.controller.ts',
+        path: 'apps/api/src/{{controller}}',
         pattern: /(?=;\s*$)/,
         templateFile: '.plop/endpoint/controller.hbs',
       },
