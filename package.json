@@ -1,0 +1,19 @@
+{
+  "name": "app",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "libs/*",
+    "meta/*"
+  ],
+  "devDependencies": {
+    "@tsconfig/bun": "1.0.7",
+    "@types/bun": "1.1.14",
+    "eslint": "8.57.1",
+    "prettier": "3.4.2",
+    "typescript": "5.7.2"
+  },
+  "overrides": {
+    "@sinclair/typebox": "0.32.34"
+  }
+}
