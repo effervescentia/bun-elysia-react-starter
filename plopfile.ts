@@ -1,3 +1,6 @@
+import path from 'node:path';
+
+import fg from 'fast-glob';
 import { NodePlopAPI } from 'plop';
 
 export default function (plop: NodePlopAPI) {
@@ -27,17 +30,67 @@ export default function (plop: NodePlopAPI) {
         templateFile: '.plop/resource/dto.hbs',
       },
       {
-        type: 'append',
+        type: 'modify',
         path: 'apps/api/src/app/app.module.ts',
         pattern: /^/,
         template:
-          "import { {{pascalCase name}}Controller } from '@api/{{kebabCase name}}/{{kebabCase name}}.controller';",
+          "import { {{pascalCase name}}Controller } from '@api/{{kebabCase name}}/{{kebabCase name}}.controller';\n",
       },
       {
         type: 'append',
         path: 'apps/api/src/app/app.module.ts',
         pattern: /(?=;\s*$)/,
         template: '  .use({{pascalCase name}}Controller)',
+      },
+    ],
+  });
+
+  plop.setGenerator('service', {
+    description: 'service boilerplate',
+    prompts: async (inquirer) => {
+      const { name } = await inquirer.prompt<{ name: string }>([
+        {
+          type: 'input',
+          name: 'name',
+          message: 'service name',
+        },
+      ]);
+
+      const controllers = await fg.glob('**/*.controller.ts', {
+        cwd: path.join(__dirname, 'apps/api/src'),
+      });
+
+      const { controller } = await inquirer.prompt<{ controller: string }>([
+        {
+          type: 'list',
+          name: 'controller',
+          message: 'inject service into this controller',
+          choices: controllers,
+        },
+      ]);
+
+      const folder = path.dirname(controller);
+
+      return { name, controller, folder };
+    },
+    actions: [
+      {
+        type: 'add',
+        path: 'apps/api/src/{{folder}}/{{kebabCase name}}.service.ts',
+        templateFile: '.plop/service/service.hbs',
+      },
+      {
+        type: 'modify',
+        path: 'apps/api/src/{{controller}}',
+        pattern: /^/,
+        template:
+          "import { {{pascalCase name}}Service } from '@api/{{folder}}/{{kebabCase name}}.service';\n",
+      },
+      {
+        type: 'append',
+        path: 'apps/api/src/{{controller}}',
+        pattern: /(?=;\s*$)/,
+        template: '  .decorate({ service: new {{pascalCase}}Service() })',
       },
     ],
   });
@@ -75,11 +128,11 @@ export default function (plop: NodePlopAPI) {
     ],
     actions: [
       {
-        type: 'append',
+        type: 'modify',
         path: 'apps/api/src/{{kebabCase name}}/{{kebabCase name}}.controller.ts',
-        pattern: /^/m,
+        pattern: /^/,
         template:
-          "import { {{pascalCase name}}DTO } from '@api/{{kebabCase name}}/data/{{kebabCase name}}.dto';",
+          "import { {{pascalCase name}}DTO } from '@api/{{kebabCase name}}/data/{{kebabCase name}}.dto';\n",
       },
       {
         type: 'append',
