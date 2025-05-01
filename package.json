@@ -6,14 +6,20 @@
     "libs/*",
     "meta/*"
   ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev"
+  },
   "devDependencies": {
     "@tsconfig/bun": "1.0.7",
     "@types/bun": "1.1.14",
     "eslint": "8.57.1",
     "prettier": "3.4.2",
+    "turbo": "2.5.2",
     "typescript": "5.7.2"
   },
   "overrides": {
     "@sinclair/typebox": "0.32.34"
-  }
+  },
+  "packageManager": "bun@1.2.11"
 }
