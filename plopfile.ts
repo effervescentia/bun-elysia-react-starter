@@ -89,8 +89,8 @@ export default function (plop: NodePlopAPI) {
       {
         type: 'append',
         path: 'apps/api/src/{{controller}}',
-        pattern: /(?=;\s*$)/,
-        template: '  .decorate({ service: new {{pascalCase}}Service() })',
+        pattern: /Elysia.+}\)/g,
+        template: '  .decorate({ service: new {{pascalCase name}}Service() })',
       },
     ],
   });
@@ -102,7 +102,7 @@ export default function (plop: NodePlopAPI) {
         cwd: path.join(__dirname, 'apps/api/src'),
       });
 
-      return inquirer.prompt<{
+      const data = await inquirer.prompt<{
         controller: string;
         method: string;
         path: string;
@@ -136,6 +136,11 @@ export default function (plop: NodePlopAPI) {
           default: '/',
         },
       ]);
+
+      return {
+        ...data,
+        path: data.path.startsWith('/') ? data.path : `/${data.path}`,
+      };
     },
     actions: [
       {
