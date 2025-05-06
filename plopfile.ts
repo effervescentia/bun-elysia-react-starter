@@ -2,7 +2,6 @@ import path from 'node:path';
 
 import fg from 'fast-glob';
 import { NodePlopAPI } from 'plop';
-import {} from 'type-route';
 
 export default function (plop: NodePlopAPI) {
   plop.setGenerator('resource', {
