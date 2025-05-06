@@ -2,6 +2,7 @@ import path from 'node:path';
 
 import fg from 'fast-glob';
 import { NodePlopAPI } from 'plop';
+import {} from 'type-route';
 
 export default function (plop: NodePlopAPI) {
   plop.setGenerator('resource', {
@@ -148,6 +149,144 @@ export default function (plop: NodePlopAPI) {
         path: 'apps/api/src/{{controller}}',
         pattern: /(?=;\s*$)/,
         templateFile: '.plop/endpoint/controller.hbs',
+      },
+    ],
+  });
+
+  plop.setGenerator('page', {
+    description: 'web page boilerplate',
+    prompts: async (inquirer) => {
+      const { name } = await inquirer.prompt<{ name: string }>([
+        {
+          type: 'input',
+          name: 'name',
+          message: 'page name',
+        },
+      ]);
+
+      const { route } = await inquirer.prompt<{ route: string }>([
+        {
+          type: 'input',
+          name: 'route',
+          message: 'page route',
+          default: `/${name}`,
+        },
+      ]);
+
+      if (!route.includes(':')) return { name, route };
+
+      // split around route parameters like `:foo_id` or `:bar_id?`
+      const parts = route.split(/(?=:\w+\??)|(?<=:\w+\??)(?![\w?])/);
+
+      const { schema, factory, attrs, props, typedef } = parts.reduce(
+        (acc, part) => {
+          if (part.startsWith(':')) {
+            const key = part.replaceAll(/[:?]/g, '');
+            const isOptional = part.endsWith('?');
+
+            acc.schema += `\n      ${key}: param.path${isOptional ? '.optional' : ''}.string,`;
+            acc.factory += `$\{p.${key}}`;
+            acc.attrs += ` ${key}={params.${key}}`;
+            acc.typedef += `\n  ${key}${isOptional ? '?' : ''}: string;`;
+            acc.props.push(key);
+          } else {
+            acc.factory += part;
+          }
+
+          return acc;
+        },
+        {
+          schema: '',
+          factory: '',
+          attrs: '',
+          props: [] as string[],
+          typedef: '',
+        },
+      );
+
+      const routeTemplate = `\n  {{camelCase name}}: defineRoute(
+    {${schema}\n    },
+    (p) => \`${factory}\`,
+  ),`;
+
+      const renderTemplate = `    .with({ name: '{{camelCase name}}' }, ({ params }) => <{{pascalCase name}}${attrs} />)\n\n`;
+
+      return {
+        name,
+        route,
+        propsDestruct: `{ ${props.join(', ')} }`,
+        propsInterface: `{${typedef}\n}`,
+        routeTemplate,
+        renderTemplate,
+        componentTemplateFile: '.plop/page/page-with-props.hbs',
+      };
+    },
+    actions: (data) => [
+      {
+        type: 'add',
+        path: 'apps/web/src/pages/{{kebabCase name}}/{{kebabCase name}}.page.tsx',
+        templateFile: data?.componentTemplateFile ?? '.plop/page/page.hbs',
+      },
+      {
+        type: 'append',
+        path: 'apps/web/src/app/app.router.ts',
+        pattern: /(?=}\);\s*$)/,
+        template:
+          data?.routeTemplate ??
+          `  {{camelCase name}}: defineRoute('{{route}}'),\n`,
+      },
+      {
+        type: 'modify',
+        path: 'apps/web/src/app/app.component.tsx',
+        pattern: /^/,
+        template:
+          "import { {{pascalCase name}} } from '@web/pages/{{kebabCase name}}/{{kebabCase name}}.page';\n",
+      },
+      {
+        type: 'append',
+        path: 'apps/web/src/app/app.component.tsx',
+        pattern: /(?=\.otherwise\()/,
+        template:
+          data?.renderTemplate ??
+          `    .with({ name: '{{camelCase name}}' }, () => <{{pascalCase name}} />)\n\n`,
+      },
+      {
+        type: 'modify',
+        path: 'apps/web/src/app/app.router.ts',
+        transform: (text) => {
+          const match = text.match(
+            /(?<=import {)[^}]+(?=} from 'type-route';)/,
+          );
+          if (!match) {
+            console.error('failed to inject imports into app.router.ts');
+            return text;
+          }
+
+          const imports = match[0];
+
+          const isMultiline = imports.includes('\n');
+          const requiredImports = [
+            'defineRoute',
+            data?.routeTemplate ? 'param' : [],
+          ].flat();
+          const missingImports = requiredImports.filter(
+            (name) => !imports.match(RegExp(`\\b${name}\\b`)),
+          );
+
+          if (!missingImports.length) return text;
+
+          let transformed = imports.trim();
+          for (const name of missingImports) {
+            if (isMultiline) {
+              transformed = `\n${transformed},\n  ${name}\n`;
+            } else {
+              transformed = ` ${transformed}, ${name} `;
+            }
+          }
+
+          const matchIndex = match.index!;
+          return `${text.slice(0, matchIndex)}${transformed}${text.slice(matchIndex + imports.length)}`;
+        },
       },
     ],
   });
