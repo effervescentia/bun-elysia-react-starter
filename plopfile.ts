@@ -64,7 +64,7 @@ export default function (plop: NodePlopAPI) {
       ]);
 
       const controllers = await fg.glob('**/*.controller.ts', {
-        cwd: path.join(__dirname, 'apps/api/src'),
+        cwd: 'apps/api/src',
       });
 
       const { controller } = await inquirer.prompt<{ controller: string }>([
@@ -157,6 +157,67 @@ export default function (plop: NodePlopAPI) {
         templateFile: '.plop/endpoint/controller.hbs',
       },
     ],
+  });
+
+  plop.setGenerator('dto', {
+    description: 'dto boilerplate',
+    prompts: async (inquirer) => {
+      const modules = await fg.glob('*', {
+        onlyDirectories: true,
+        cwd: 'apps/api/src',
+      });
+
+      const { name } = await inquirer.prompt<{ name: string }>([
+        {
+          type: 'input',
+          name: 'name',
+          message: 'service name',
+        },
+      ]);
+
+      if (!modules.includes(name)) {
+        modules.push(name);
+      }
+
+      const data = await inquirer.prompt<{
+        module: string;
+        export: boolean;
+      }>([
+        {
+          type: 'list',
+          name: 'module',
+          message: 'module name',
+          default: name,
+          choices: modules,
+        },
+        {
+          type: 'confirm',
+          name: 'export',
+          message: 'export dto type',
+          default: false,
+        },
+      ]);
+
+      return { ...data, name };
+    },
+    actions: (data) =>
+      [
+        {
+          type: 'add',
+          path: 'apps/api/src/{{module}}/data/{{kebabCase name}}.dto.ts',
+          templateFile: '.plop/dto/dto.hbs',
+        },
+        data?.export
+          ? {
+              type: 'modify',
+              path: 'apps/api/src/app/app.interface.ts',
+              pattern: /^(export {};\n)?/,
+              template:
+                // eslint-disable-next-line no-useless-escape
+                "export type \{ {{pascalCase name}} } from '@api/{{module}}/data/{{kebabCase name}}.dto';\n",
+            }
+          : [],
+      ].flat(),
   });
 
   plop.setGenerator('page', {
