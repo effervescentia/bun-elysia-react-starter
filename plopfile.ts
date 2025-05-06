@@ -290,4 +290,22 @@ export default function (plop: NodePlopAPI) {
       },
     ],
   });
+
+  plop.setGenerator('modal', {
+    description: 'web modal boilerplate',
+    prompts: [
+      {
+        type: 'input',
+        name: 'name',
+        message: 'modal name',
+      },
+    ],
+    actions: [
+      {
+        type: 'add',
+        path: 'apps/web/src/modals/{{kebabCase name}}/{{kebabCase name}}.modal.tsx',
+        templateFile: '.plop/modal/modal.hbs',
+      },
+    ],
+  });
 }
