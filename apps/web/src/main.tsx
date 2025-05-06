@@ -2,12 +2,12 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { App } from './app/app.component';
-import { RouteProvider } from './app/app.router';
+import { AppProvider } from './app/app.provider';
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouteProvider>
+    <AppProvider>
       <App />
-    </RouteProvider>
+    </AppProvider>
   </React.StrictMode>,
 );
