@@ -1,3 +1,4 @@
+import { Box } from '@web/components/box/box.component';
 import { template } from '@web/utils/template.util';
 import { useContext } from 'react';
 
@@ -12,15 +13,15 @@ const CancelButton: React.FC = () => {
 export const Dialog = template(
   ['Body', 'Actions'],
   ({ children, Body, Actions }) => (
-    <div>
-      <div>
+    <Box>
+      <Box>
         <Body />
-      </div>
+      </Box>
       {children}
-      <div>
+      <Box>
         <CancelButton />
         <Actions />
-      </div>
-    </div>
+      </Box>
+    </Box>
   ),
 );
