@@ -31,6 +31,13 @@ export default function (plop: NodePlopAPI) {
       },
       {
         type: 'modify',
+        path: 'apps/api/src/db/db.schema.ts',
+        pattern: /^(export {};\n)?/,
+        template:
+          "export * from '@api/{{kebabCase name}}/data/{{kebabCase name}}.db';\n",
+      },
+      {
+        type: 'modify',
         path: 'apps/api/src/app/app.module.ts',
         pattern: /^/,
         template:
