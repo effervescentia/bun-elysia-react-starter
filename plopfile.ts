@@ -431,4 +431,22 @@ export default function (plop: NodePlopAPI) {
       },
     ],
   });
+
+  plop.setGenerator('web:component', {
+    description: 'web component boilerplate',
+    prompts: [
+      {
+        type: 'input',
+        name: 'name',
+        message: 'component name',
+      },
+    ],
+    actions: [
+      {
+        type: 'add',
+        path: 'apps/web/src/components/{{kebabCase name}}/{{kebabCase name}}.component.tsx',
+        templateFile: '.plop/component/component.hbs',
+      },
+    ],
+  });
 }
