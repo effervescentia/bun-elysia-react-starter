@@ -8,16 +8,18 @@
   ],
   "scripts": {
     "build": "turbo run build",
+    "check": "biome check --use-editorconfig true",
     "dev": "turbo run dev",
+    "format": "biome format --use-editorconfig true",
+    "lint": "biome lint",
     "plop": "NODE_OPTIONS='--import tsx' plop --plopfile=plopfile.ts"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.0.5",
     "@tsconfig/bun": "1.0.7",
     "@types/bun": "1.1.14",
-    "eslint": "8.57.1",
     "fast-glob": "3.3.3",
     "plop": "4.0.1",
-    "prettier": "3.4.2",
     "tsx": "4.19.4",
     "turbo": "2.5.2",
     "typescript": "5.7.2"
