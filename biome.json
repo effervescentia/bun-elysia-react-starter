@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["!.turbo/**", "**/*.ts", "**/*.tsx", "**/*.mts", "**/*.js", "**/*.json"]
+    "includes": ["!.turbo/**", "!**/build/**", "**/*.ts", "**/*.tsx", "**/*.mts", "**/*.js", "**/*.json"]
   },
   "formatter": {
     "enabled": true,

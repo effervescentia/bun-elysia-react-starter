@@ -10,8 +10,7 @@
     "build": "turbo run build",
     "check": "biome check --use-editorconfig true",
     "dev": "turbo run dev",
-    "format": "biome format --use-editorconfig true",
-    "lint": "biome lint",
+    "format": "biome format --write --use-editorconfig true",
     "plop": "NODE_OPTIONS='--import tsx' plop --plopfile=plopfile.ts"
   },
   "devDependencies": {

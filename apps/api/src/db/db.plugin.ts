@@ -4,11 +4,9 @@ import Elysia from 'elysia';
 
 import * as schema from './db.schema';
 
-export const DatabasePlugin = new Elysia({ name: 'plugin.database' }).use(
-  (app) => {
-    const client = new PGlite({ dataDir: './data.db' });
-    const db = drizzle({ client, schema });
+export const DatabasePlugin = new Elysia({ name: 'plugin.database' }).use((app) => {
+  const client = new PGlite({ dataDir: './data.db' });
+  const db = drizzle({ client, schema });
 
-    return app.decorate({ db });
-  },
-);
+  return app.decorate({ db });
+});

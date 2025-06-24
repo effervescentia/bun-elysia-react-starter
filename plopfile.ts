@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 import fg from 'fast-glob';
-import { NodePlopAPI } from 'plop';
+import type { NodePlopAPI } from 'plop';
 
 export default function (plop: NodePlopAPI) {
   plop.setGenerator('api:resource', {
@@ -33,16 +33,13 @@ export default function (plop: NodePlopAPI) {
         type: 'modify',
         path: 'apps/api/src/db/db.schema.ts',
         pattern: /^(export {};\n)?/,
-        template:
-          "export * from '@api/{{kebabCase name}}/data/{{kebabCase name}}.db';\n",
+        template: "export * from '@api/{{kebabCase name}}/data/{{kebabCase name}}.db';\n",
       },
       {
         type: 'modify',
         path: 'apps/api/src/app/app.interface.ts',
         pattern: /^(export {};\n)?/,
-        template:
-          // eslint-disable-next-line no-useless-escape
-          "export type \{ {{pascalCase name}} } from '@api/{{kebabCase name}}/data/{{kebabCase name}}.dto';\n",
+        template: "export type \{ {{pascalCase name}} } from '@api/{{kebabCase name}}/data/{{kebabCase name}}.dto';\n",
       },
       {
         type: 'modify',
@@ -98,8 +95,7 @@ export default function (plop: NodePlopAPI) {
         type: 'modify',
         path: 'apps/api/src/{{controller}}',
         pattern: /^/,
-        template:
-          "import { {{pascalCase name}}Service } from '@api/{{folder}}/{{kebabCase name}}.service';\n",
+        template: "import { {{pascalCase name}}Service } from '@api/{{folder}}/{{kebabCase name}}.service';\n",
       },
       {
         type: 'append',
@@ -132,17 +128,7 @@ export default function (plop: NodePlopAPI) {
           type: 'list',
           name: 'method',
           message: 'http method',
-          choices: [
-            'get',
-            'put',
-            'post',
-            'head',
-            'patch',
-            'trace',
-            'delete',
-            'connect',
-            'options',
-          ],
+          choices: ['get', 'put', 'post', 'head', 'patch', 'trace', 'delete', 'connect', 'options'],
         },
         {
           type: 'input',
@@ -220,9 +206,7 @@ export default function (plop: NodePlopAPI) {
               type: 'modify',
               path: 'apps/api/src/app/app.interface.ts',
               pattern: /^(export {};\n)?/,
-              template:
-                // eslint-disable-next-line no-useless-escape
-                "export type \{ {{pascalCase name}} } from '@api/{{module}}/data/{{kebabCase name}}.dto';\n",
+              template: "export type \{ {{pascalCase name}} } from '@api/{{module}}/data/{{kebabCase name}}.dto';\n",
             }
           : [],
       ].flat(),
@@ -270,8 +254,7 @@ export default function (plop: NodePlopAPI) {
         type: 'modify',
         path: 'apps/api/src/db/db.schema.ts',
         pattern: /^(export {};\n)?/,
-        template:
-          "export * from '@api/{{module}}/data/{{kebabCase name}}.db';\n",
+        template: "export * from '@api/{{module}}/data/{{kebabCase name}}.db';\n",
       },
     ],
   });
@@ -354,33 +337,27 @@ export default function (plop: NodePlopAPI) {
         type: 'append',
         path: 'apps/web/src/app/app.router.ts',
         pattern: /(?=}\);\s*$)/,
-        template:
-          data?.routeTemplate ??
-          `  {{camelCase name}}: defineRoute('{{route}}'),\n`,
+        template: data?.routeTemplate ?? `  {{camelCase name}}: defineRoute('{{route}}'),\n`,
       },
       {
         type: 'modify',
         path: 'apps/web/src/app/app.component.tsx',
         pattern: /^/,
-        template:
-          "import { {{pascalCase name}} } from '@web/pages/{{kebabCase name}}/{{kebabCase name}}.page';\n",
+        template: "import { {{pascalCase name}} } from '@web/pages/{{kebabCase name}}/{{kebabCase name}}.page';\n",
       },
       {
         type: 'append',
         path: 'apps/web/src/app/app.component.tsx',
         pattern: /(?=\.otherwise\()/,
         template:
-          data?.renderTemplate ??
-          `    .with({ name: '{{camelCase name}}' }, () => <{{pascalCase name}} />)\n\n`,
+          data?.renderTemplate ?? `    .with({ name: '{{camelCase name}}' }, () => <{{pascalCase name}} />)\n\n`,
       },
       {
         type: 'modify',
         path: 'apps/web/src/app/app.router.ts',
         transform: (text) => {
-          const match = text.match(
-            /(?<=import {)[^}]+(?=} from 'type-route';)/,
-          );
-          if (!match) {
+          const match = text.match(/(?<=import {)[^}]+(?=} from 'type-route';)/);
+          if (match?.index === undefined) {
             console.error('failed to inject imports into app.router.ts');
             return text;
           }
@@ -388,13 +365,8 @@ export default function (plop: NodePlopAPI) {
           const imports = match[0];
 
           const isMultiline = imports.includes('\n');
-          const requiredImports = [
-            'defineRoute',
-            data?.routeTemplate ? 'param' : [],
-          ].flat();
-          const missingImports = requiredImports.filter(
-            (name) => !imports.match(RegExp(`\\b${name}\\b`)),
-          );
+          const requiredImports = ['defineRoute', data?.routeTemplate ? 'param' : []].flat();
+          const missingImports = requiredImports.filter((name) => !imports.match(RegExp(`\\b${name}\\b`)));
 
           if (!missingImports.length) return text;
 
@@ -407,8 +379,7 @@ export default function (plop: NodePlopAPI) {
             }
           }
 
-          const matchIndex = match.index!;
-          return `${text.slice(0, matchIndex)}${transformed}${text.slice(matchIndex + imports.length)}`;
+          return `${text.slice(0, match.index)}${transformed}${text.slice(match.index + imports.length)}`;
         },
       },
     ],

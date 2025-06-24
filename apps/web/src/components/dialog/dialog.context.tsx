@@ -7,9 +7,7 @@ export interface DialogContext {
 
 export const DialogContext = createContext<DialogContext>(null as never);
 
-export const DialogProvider: React.FC<React.PropsWithChildren> = ({
-  children,
-}) => {
+export const DialogProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [content, setContent] = useState<React.ReactNode | null>(null);
   const ref = useRef<HTMLDialogElement>(null);
 

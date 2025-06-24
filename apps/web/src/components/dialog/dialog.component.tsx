@@ -7,21 +7,22 @@ import { DialogContext } from './dialog.context';
 const CancelButton: React.FC = () => {
   const { close } = useContext(DialogContext);
 
-  return <button onClick={close}>Cancel</button>;
+  return (
+    <button type="button" onClick={close}>
+      Cancel
+    </button>
+  );
 };
 
-export const Dialog = template(
-  ['Body', 'Actions'],
-  ({ children, Body, Actions }) => (
+export const Dialog = template(['Body', 'Actions'], ({ children, Body, Actions }) => (
+  <Box>
     <Box>
-      <Box>
-        <Body />
-      </Box>
-      {children}
-      <Box>
-        <CancelButton />
-        <Actions />
-      </Box>
+      <Body />
     </Box>
-  ),
-);
+    {children}
+    <Box>
+      <CancelButton />
+      <Actions />
+    </Box>
+  </Box>
+));
