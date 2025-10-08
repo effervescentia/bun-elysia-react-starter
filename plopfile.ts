@@ -53,6 +53,12 @@ export default function (plop: NodePlopAPI) {
       },
       {
         type: 'modify',
+        path: 'apps/web/index.html',
+        pattern: /<title>App<\/title>/,
+        template: '<title>{{titleCase name}}</title>',
+      },
+      {
+        type: 'modify',
         path: 'README.md',
         pattern: /^.*$/s,
         template: '# {{kebabCase name}}\n',
