@@ -9,6 +9,13 @@
     "dev": {
       "persistent": true,
       "cache": false
+    },
+    "check:types": {
+      "inputs": ["src/**"]
+    },
+    "test": {
+      "inputs": ["src/**"],
+      "cache": false
     }
   }
 }
