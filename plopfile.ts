@@ -18,7 +18,7 @@ export default function (plop: NodePlopAPI) {
       {
         type: 'modify',
         path: 'plopfile.ts',
-        pattern: /\/\/ REMOVE_ON_INIT.*REMOVE_ON_INIT/ms,
+        pattern: /\s+\/\/ REMOVE_ON_INIT.*REMOVE_ON_INIT/ms,
         template: '',
       },
       {
@@ -55,7 +55,7 @@ export default function (plop: NodePlopAPI) {
         type: 'modify',
         path: 'README.md',
         pattern: /^.*$/s,
-        template: '# {{kebabCase name}}',
+        template: '# {{kebabCase name}}\n',
       },
     ],
   });
