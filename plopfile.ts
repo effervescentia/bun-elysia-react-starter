@@ -18,14 +18,8 @@ export default function (plop: NodePlopAPI) {
       {
         type: 'modify',
         path: 'plopfile.ts',
-        pattern: /\/\/ REMOVE_ON_INIT(\n.*)+REMOVE_ON_INIT/m,
+        pattern: /\/\/ REMOVE_ON_INIT.*REMOVE_ON_INIT/ms,
         template: '',
-      },
-      {
-        type: 'modify',
-        path: 'README.md',
-        pattern: /^.*$/m,
-        template: '# {{kebabCase name}}',
       },
       {
         type: 'modify',
@@ -36,7 +30,7 @@ export default function (plop: NodePlopAPI) {
       {
         type: 'modify',
         path: 'package.json',
-        pattern: /^\s+"init":.*$/,
+        pattern: /^\s+"init":.*\n/m,
         template: '',
       },
       {
@@ -56,6 +50,12 @@ export default function (plop: NodePlopAPI) {
         path: 'apps/web/package.json',
         pattern: /"@app\/web"/,
         template: '"@{{kebabCase name}}/web"',
+      },
+      {
+        type: 'modify',
+        path: 'README.md',
+        pattern: /^.*$/s,
+        template: '# {{kebabCase name}}',
       },
     ],
   });
