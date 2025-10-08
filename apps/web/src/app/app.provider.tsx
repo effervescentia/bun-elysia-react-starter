@@ -1,4 +1,4 @@
-import { DialogProvider } from '@web/components/dialog/dialog.context';
+import { DialogProvider } from '@bltx/web';
 
 import { RouteProvider } from './app.router';
 

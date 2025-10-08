@@ -7,7 +7,18 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["!.turbo/**", "!**/build/**", "**/*.ts", "**/*.tsx", "**/*.mts", "**/*.js", "**/*.json"]
+    "includes": [
+      "!.turbo/**",
+      "!**/build/**",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.mts",
+      "**/*.js",
+      "**/*.json",
+      "!**/data.db/**",
+      "!**/.drizzle/**",
+      "!**/.cache/**"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -64,6 +75,23 @@
         "rules": {
           "style": {
             "useImportType": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/apps/api/**/*.ts", "!**/apps/api/scripts/**/*", "!**/*.test.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "@api/lib": "Do not import this from within apps/api"
+                }
+              }
+            }
           }
         }
       }

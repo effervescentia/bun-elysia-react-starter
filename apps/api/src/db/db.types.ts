@@ -1,4 +1,4 @@
-import type { PgQueryResultHKT, PgTransaction } from 'drizzle-orm/pg-core';
+import type { Database } from '@bltx/db';
+import type * as schema from './db.schema';
 
-// biome-ignore lint/suspicious/noExplicitAny: any is fine here
-export type Transaction = PgTransaction<PgQueryResultHKT, any, any>;
+export type DB = Database<typeof schema>;

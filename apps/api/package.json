@@ -1,20 +1,29 @@
 {
   "name": "@app/api",
-  "main": "src/main.ts",
+  "type": "module",
+  "main": "src/lib.ts",
   "scripts": {
+    "check:types": "tsc --noEmit",
     "dev": "bun --watch src/main.ts",
-    "db:push": "drizzle-kit push"
+    "db:clean": "rimraf data.db",
+    "db:push": "bun ./scripts/db-push.ts",
+    "db:visualize": "drizzle-lab visualizer",
+    "test": "bun test",
+    "tdd": "bun test --watch"
   },
   "dependencies": {
-    "@elysiajs/cors": "1.1.1",
-    "drizzle-orm": "0.38.2",
-    "drizzle-typebox": "0.2.0",
-    "elysia": "1.1.26",
-    "logixlysia": "4.2.7",
-    "env-schema": "6.0.1"
+    "@bltx/core": "1.1.0",
+    "@bltx/db": "1.3.0",
+    "@electric-sql/pglite": "0.3.5",
+    "@elysiajs/cors": "1.3.3",
+    "drizzle-orm": "0.44.3",
+    "drizzle-typebox": "0.3.3",
+    "elysia": "1.3.6"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "0.2.15",
-    "drizzle-kit": "0.30.1"
+    "@bltx/test": "1.0.1",
+    "drizzle-kit": "0.31.4",
+    "drizzle-lab": "0.11.0",
+    "rimraf": "6.0.1"
   }
 }
