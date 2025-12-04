@@ -29,7 +29,7 @@ export default function (plop: NodePlopAPI) {
       {
         type: 'modify',
         path: 'apps/web/src/app/app.env.ts',
-        pattern: /__app__/,
+        pattern: /__app__/g,
         template: '{{snakeCase envPrefix}}',
       },
       {
@@ -41,13 +41,13 @@ export default function (plop: NodePlopAPI) {
       {
         type: 'modify',
         path: 'tests/e2e/playwright.config.mts',
-        pattern: /__app__/,
+        pattern: /__app__/g,
         template: '{{kebabCase name}}',
       },
       {
         type: 'modify',
         path: 'skaffold.yaml',
-        pattern: /__app__/,
+        pattern: /__app__/g,
         template: '{{kebabCase name}}',
       },
       async () => {
