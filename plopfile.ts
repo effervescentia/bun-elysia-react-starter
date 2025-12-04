@@ -16,13 +16,13 @@ export default function (plop: NodePlopAPI) {
     actions: [
       {
         type: 'add',
-        path: 'k8s/db/k8s-gateway.yaml',
+        path: 'k8s/k8s-gateway.yaml',
         templateFile: '.plop/init/k8s-gateway.yaml.hbs',
       },
       {
         type: 'addMany',
         destination: 'k8s/db',
-        templateFiles: '.plop/init/k8s-db/**',
+        templateFiles: '.plop/init/k8s-db/**/*',
         base: '.plop/init/k8s-db',
       },
       async () => {
