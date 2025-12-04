@@ -5,59 +5,6 @@ import type { NodePlopAPI } from 'plop';
 export default function (plop: NodePlopAPI) {
   usePlugins(plop);
 
-  plop.setGenerator('k8s:init', {
-    prompts: [
-      {
-        type: 'input',
-        name: 'name',
-        message: 'project name',
-      },
-      {
-        type: 'input',
-        name: 'envPrefix',
-        message: 'env variable prefix',
-        default: 'APP',
-      },
-    ],
-    actions: [
-      {
-        type: 'addMany',
-        destination: '.',
-        templateFiles: '.plop/init',
-        base: '.plop/init',
-      },
-      {
-        type: 'modify',
-        path: 'apps/web/src/app/app.env.ts',
-        pattern: /__app__/g,
-        template: '{{snakeCase envPrefix}}',
-      },
-      {
-        type: 'modify',
-        path: 'tests/e2e/package.json',
-        pattern: /"@app\/test-e2e"/,
-        template: '"@{{kebabCase name}}/test-e2e"',
-      },
-      {
-        type: 'modify',
-        path: 'tests/e2e/playwright.config.mts',
-        pattern: /__app__/g,
-        template: '{{kebabCase name}}',
-      },
-      {
-        type: 'modify',
-        path: 'skaffold.yaml',
-        pattern: /__app__/g,
-        template: '{{kebabCase name}}',
-      },
-      async () => {
-        await fs.rm('.plop/init', { recursive: true, force: true });
-
-        return 'deleted .plop/init';
-      },
-    ],
-  });
-
   // REMOVE_ON_INIT
   plop.setGenerator('init', {
     description: 'initialize repository by rewriting key files',
@@ -124,12 +71,46 @@ export default function (plop: NodePlopAPI) {
         pattern: /<title>App<\/title>/,
         template: '<title>{{titleCase name}}</title>',
       },
-
+      {
+        type: 'modify',
+        path: 'apps/web/src/app/app.env.ts',
+        pattern: /__app__/g,
+        template: '{{snakeCase envPrefix}}',
+      },
+      {
+        type: 'modify',
+        path: 'tests/e2e/package.json',
+        pattern: /"@app\/test-e2e"/,
+        template: '"@{{kebabCase name}}/test-e2e"',
+      },
+      {
+        type: 'modify',
+        path: 'tests/e2e/playwright.config.mts',
+        pattern: /__app__/g,
+        template: '{{kebabCase name}}',
+      },
+      {
+        type: 'modify',
+        path: 'skaffold.yaml',
+        pattern: /__app__/g,
+        template: '{{kebabCase name}}',
+      },
       {
         type: 'modify',
         path: 'README.md',
         pattern: /^.*$/s,
         template: '# {{kebabCase name}}\n',
+      },
+      {
+        type: 'addMany',
+        destination: '.',
+        templateFiles: '.plop/init',
+        base: '.plop/init',
+      },
+      async () => {
+        await fs.rm('.plop/init', { recursive: true, force: true });
+
+        return 'deleted .plop/init';
       },
     ],
   });
