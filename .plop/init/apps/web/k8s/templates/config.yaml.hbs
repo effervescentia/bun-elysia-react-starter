@@ -7,5 +7,5 @@ metadata:
 data:
   PORT: \{{ .Values.service.port | quote }}
   PORT_HEALTH: \{{ .Values.health.port | quote }}
-  
+
   {{envPrefix}}_API_HOST: \{{ .Values.api.host }}
