@@ -24,13 +24,13 @@ gateway:
   sectionName: web
 
 route:
-  hostname: app.__app__.localhost
+  hostname: app.{{kebabCase name}}.localhost
 
 tls:
   namespace: traefik
 
 api:
-  host: 'https://api.__app__.localhost:1337'
+  host: 'https://api.{{kebabCase name}}.localhost:1337'
 
 geolocation:
   # cache TTL in seconds
