@@ -15,15 +15,10 @@ export default function (plop: NodePlopAPI) {
     ],
     actions: [
       {
-        type: 'add',
-        path: 'k8s/k8s-gateway.yaml',
-        templateFile: '.plop/init/k8s-gateway.yaml.hbs',
-      },
-      {
         type: 'addMany',
-        destination: 'k8s/db',
-        templateFiles: '.plop/init/k8s-db',
-        base: '.plop/init/k8s-db',
+        destination: '.',
+        templateFiles: '.plop/init',
+        base: '.plop/init',
       },
       async () => {
         await fs.rm('.plop/init', { recursive: true, force: true });

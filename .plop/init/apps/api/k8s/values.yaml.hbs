@@ -23,19 +23,19 @@ gateway:
   sectionName: api
 
 route:
-  hostname: api.__app__.localhost
+  hostname: api.{{kebabCase name}}.localhost
 
 tls:
   namespace: traefik
 
 web:
-  origin: https://app.__app__.localhost:1337
+  origin: https://app.{{kebabCase name}}.localhost:1337
 
 postgres:
   hostname: db-postgres
   port: 5432
-  database: __app__
-  username: __app__
+  database: {{snakeCase name}}
+  username: {{snakeCase name}}
 
 redis:
   hostname: db-redis-master

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: \{{ include "{{kebabCase name}}-api.fullname" . }}
+  labels:
+    \{{- include "{{kebabCase name}}-api.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: \{{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/component: server
+    \{{- include "{{kebabCase name}}-api.selectorLabels" . | nindent 4 }}
