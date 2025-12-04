@@ -9,22 +9,22 @@ spec:
     - name: api
       port: 8443
       protocol: HTTPS
-      hostname: api.vex.localhost
+      hostname: api.__app__.localhost
       allowedRoutes:
         namespaces:
           from: All
       tls:
         mode: Terminate
         certificateRefs:
-          - name: api-vex-api-tls
+          - name: api-__app__-api-tls
     - name: web
       port: 8443
       protocol: HTTPS
-      hostname: app.vex.localhost
+      hostname: app.__app__.localhost
       allowedRoutes:
         namespaces:
           from: All
       tls:
         mode: Terminate
         certificateRefs:
-          - name: web-vex-web-tls
+          - name: web-__app__-web-tls

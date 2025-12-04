@@ -15,11 +15,11 @@ fi
 env_file="$ENV_FILE"
 cmd="$ENTRYPOINT_CMD"
 
-vex_env=$(env | grep '^VEX_' | cut -d= -f1)
-for env_var in $vex_env
+scoped_env=$(env | grep '^__APP___' | cut -d= -f1)
+for env_var in $scoped_env
 do
   env_val=$(eval echo "\$$env_var")
-  echo "window.vexenv.${env_var#VEX_} = '$env_val';" >> "$env_file"
+  echo "window.__app__env.${env_var#__APP___} = '$env_val';" >> "$env_file"
 done
 
 if [ "$NODE_ENV" = "development" ]; then

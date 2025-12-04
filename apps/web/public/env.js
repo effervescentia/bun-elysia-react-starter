@@ -1,1 +1,1 @@
-window.vexenv = {};
+window.__app__env = {};

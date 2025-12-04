@@ -23,19 +23,19 @@ gateway:
   sectionName: api
 
 route:
-  hostname: api.vex.localhost
+  hostname: api.__app__.localhost
 
 tls:
   namespace: traefik
 
 web:
-  origin: https://app.vex.localhost:1337
+  origin: https://app.__app__.localhost:1337
 
 postgres:
   hostname: db-postgres
   port: 5432
-  database: vex
-  username: vex
+  database: __app__
+  username: __app__
 
 redis:
   hostname: db-redis-master
