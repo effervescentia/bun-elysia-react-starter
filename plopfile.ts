@@ -34,13 +34,13 @@ export default function (plop: NodePlopAPI) {
       },
       {
         type: 'modify',
-        path: 'test/e2e/package.json',
+        path: 'tests/e2e/package.json',
         pattern: /"@app\/test-e2e"/,
         template: '"@{{kebabCase name}}/test-e2e"',
       },
       {
         type: 'modify',
-        path: 'test/e2e/playwright.config.mts',
+        path: 'tests/e2e/playwright.config.mts',
         pattern: /__app__/,
         template: '{{kebabCase name}}',
       },
