@@ -30,7 +30,7 @@ export default function (plop: NodePlopAPI) {
         type: 'modify',
         path: 'apps/web/src/app/app.env.ts',
         pattern: /__app__/,
-        template: '{{snakeCase name}}',
+        template: '{{snakeCase envPrefix}}',
       },
       {
         type: 'modify',
