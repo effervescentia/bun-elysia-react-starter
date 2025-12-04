@@ -1,23 +1,13 @@
 import { EnvironmentPlugin } from '@api/global/environment.plugin';
-import { LoggerPlugin } from '@bltx/core';
+import { HealthController } from '@api/health/health.controller';
 import { cors } from '@elysiajs/cors';
-import { DrizzleQueryError } from 'drizzle-orm/errors';
 import Elysia from 'elysia';
 
 export type App = typeof App;
 
+// TODO: write custom logger plugin
 export const App = new Elysia()
-  .onError((err) => {
-    if (err instanceof DrizzleQueryError) {
-      console.error(err.query);
-      console.error(err.message);
-      console.error(err.cause);
-      return err;
-    }
+  .use(cors({ credentials: true, maxAge: 60 }))
 
-    console.log(err);
-  })
-
-  .use(cors())
   .use(EnvironmentPlugin)
-  .use(LoggerPlugin);
+  .use(HealthController);

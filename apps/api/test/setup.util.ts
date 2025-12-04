@@ -15,8 +15,6 @@ export const setupIntegrationTest = integrationTestFactory({
 
     WEB_ORIGIN: 'localhost',
 
-    JWT_AUTH_SECRET: 'test',
-
     POSTGRES_HOSTNAME: 'localhost',
     POSTGRES_PORT: 5432,
     POSTGRES_DATABASE: 'test',
@@ -27,10 +25,6 @@ export const setupIntegrationTest = integrationTestFactory({
     REDIS_PORT: 6379,
     REDIS_USERNAME: 'test',
     REDIS_PASSWORD: 'test',
-
-    ACCOUNT_MAX_ALIASES: 3,
-    ACCOUNT_ALIAS_EXPIRY_SHORT: 1000,
-    ACCOUNT_ALIAS_EXPIRY_LONG: 10000,
   } satisfies Environment,
   timeout: import.meta.env.CI ? 30_000 : 15_000,
 });
