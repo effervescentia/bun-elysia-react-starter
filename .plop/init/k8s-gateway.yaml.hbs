@@ -9,22 +9,22 @@ spec:
     - name: api
       port: 8443
       protocol: HTTPS
-      hostname: api.__app__.localhost
+      hostname: api.{{kebabCase name}}.localhost
       allowedRoutes:
         namespaces:
           from: All
       tls:
         mode: Terminate
         certificateRefs:
-          - name: api-__app__-api-tls
+          - name: api-{{kebabCase name}}-api-tls
     - name: web
       port: 8443
       protocol: HTTPS
-      hostname: app.__app__.localhost
+      hostname: app.{{kebabCase name}}.localhost
       allowedRoutes:
         namespaces:
           from: All
       tls:
         mode: Terminate
         certificateRefs:
-          - name: web-__app__-web-tls
+          - name: web-{{kebabCase name}}-web-tls

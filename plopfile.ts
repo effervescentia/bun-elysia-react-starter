@@ -1,26 +1,60 @@
+import fs from 'node:fs/promises';
 import { usePlugins } from '@bltx/plop';
 import type { NodePlopAPI } from 'plop';
 
 export default function (plop: NodePlopAPI) {
   usePlugins(plop);
 
+  plop.setGenerator('k8s:init', {
+    prompts: [
+      {
+        type: 'input',
+        name: 'name',
+        message: 'project name',
+      },
+    ],
+    actions: [
+      {
+        type: 'add',
+        path: 'k8s/db/k8s-gateway.yaml',
+        templateFile: '.plop/init/k8s-gateway.yaml.hbs',
+      },
+      {
+        type: 'addMany',
+        destination: 'k8s/db',
+        templateFiles: '.plop/init/k8s-db/**',
+        base: '.plop/init/k8s-db',
+      },
+      async () => {
+        await fs.rm('.plop/init', { recursive: true, force: true });
+
+        return 'deleted .plop/init';
+      },
+    ],
+  });
+
   // REMOVE_ON_INIT
   plop.setGenerator('init', {
     description: 'initialize repository by rewriting key files',
     prompts: async (inquirer) => {
-      return await inquirer.prompt([
+      const { name } = await inquirer.prompt<{ name: string }>([
         {
           type: 'input',
           name: 'name',
           message: 'project name',
         },
+      ]);
+
+      const { envPrefix } = await inquirer.prompt<{ envPrefix: string }>([
         {
           type: 'input',
-          name: 'env_prefix',
+          name: 'envPrefix',
           message: 'env variable prefix',
-          default: '',
+          default: name.toUpperCase(),
         },
       ]);
+
+      return { name, envPrefix };
     },
     actions: [
       {

@@ -10,13 +10,13 @@ migration:
   postgres:
     hostname: db-postgres
     port: 5432
-    database: __app__
+    database: {{snakeCase name}}
     username: postgres
 
 postgres:
   auth:
-    database: __app__
-    username: __app__
+    database: {{snakeCase name}}
+    username: {{snakeCase name}}
     existingSecret: postgres-auth-secrets
 
   primary:
@@ -30,9 +30,9 @@ postgres:
       scripts:
         access.sql: |
           ALTER DEFAULT PRIVILEGES IN SCHEMA public
-            GRANT ALL PRIVILEGES ON TABLES TO __app__;
+            GRANT ALL PRIVILEGES ON TABLES TO {{snakeCase name}};
           ALTER DEFAULT PRIVILEGES IN SCHEMA public
-            GRANT ALL PRIVILEGES ON SEQUENCES TO __app__;
+            GRANT ALL PRIVILEGES ON SEQUENCES TO {{snakeCase name}};
 
 redis:
   architecture: standalone
