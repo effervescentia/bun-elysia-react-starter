@@ -22,7 +22,7 @@ export default function (plop: NodePlopAPI) {
       {
         type: 'addMany',
         destination: 'k8s/db',
-        templateFiles: '.plop/init/k8s-db/**/*',
+        templateFiles: '.plop/init/k8s-db',
         base: '.plop/init/k8s-db',
       },
       async () => {
