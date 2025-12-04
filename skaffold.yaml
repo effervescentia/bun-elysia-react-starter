@@ -1,0 +1,136 @@
+apiVersion: skaffold/v4beta13
+kind: Config
+metadata:
+  name: __app__
+
+build:  
+  local:
+    useDockerCLI: true
+  artifacts:
+    - image: api
+      docker:
+        dockerfile: docker/Dockerfile.prod
+        target: release-api
+        buildArgs:
+          APP: api
+        cacheFrom: [api]
+      sync:
+        manual:
+          - src: 'apps/api/**/*.ts'
+            strip: apps/api
+            dest: '.'
+          - src: 'apps/api/package.json'
+            strip: apps/api
+            dest: '.'
+    - image: web
+      docker:
+        dockerfile: docker/Dockerfile.prod
+        target: release-web
+        buildArgs:
+          APP: web
+        cacheFrom: [web]
+      sync:
+        manual:
+          - src: 'apps/web/**/*.{ts,tsx,html}'
+            strip: apps/web
+            dest: '.'
+          - src: 'apps/api/**/*.ts'
+            strip: apps/api
+            dest: ../api
+          - src: 'apps/{api,web}/package.json'
+            strip: apps
+            dest: '..'
+    - image: db
+      docker:
+        dockerfile: docker/Dockerfile.db
+        cacheFrom: [db]
+
+manifests:
+  rawYaml:
+    - k8s/gateway.yaml
+
+deploy:
+  helm:
+    releases:
+      - name: gateway
+        repo: https://traefik.github.io/charts
+        remoteChart: traefik
+        namespace: traefik
+        createNamespace: true
+        setValues:
+          gateway.enabled: false
+          providers:
+            kubernetesIngress.enabled: false
+            kubernetesGateway.enabled: true
+      - name: db
+        chartPath: k8s/db
+        wait: true
+        useHelmSecrets: true
+        setValueTemplates:
+          migration.image.repository: '{{.IMAGE_REPO_db}}'
+          migration.image.tag: '{{.IMAGE_TAG_db}}@{{.IMAGE_DIGEST_db}}'
+      - name: api
+        chartPath: apps/api/k8s
+        useHelmSecrets: true
+        setValueTemplates:
+          image.repository: '{{.IMAGE_REPO_api}}'
+          image.tag: '{{.IMAGE_TAG_api}}@{{.IMAGE_DIGEST_api}}'
+        dependsOn: ['gateway']
+      - name: web
+        chartPath: apps/web/k8s
+        useHelmSecrets: true
+        setValueTemplates:
+          image.repository: '{{.IMAGE_REPO_web}}'
+          image.tag: '{{.IMAGE_TAG_web}}@{{.IMAGE_DIGEST_web}}'
+        dependsOn: ['gateway']
+
+portForward:
+  - resourceType: service
+    resourceName: gateway-traefik
+    namespace: traefik
+    port: 443
+    localPort: 1337
+
+test:
+  - image: api
+    structureTests:
+      - 'apps/api/test/structure.test.yaml'
+  - image: web
+    structureTests:
+      - 'apps/web/test/structure.test.yaml'
+
+profiles:
+  - name: dev
+    activation:
+      - command: dev
+    patches:
+      - op: remove
+        path: /test
+
+      - op: add
+        path: /deploy/helm/releases/1/skipBuildDependencies
+        value: true
+
+      # dev api config
+      - op: replace
+        path: /build/artifacts/0/docker/dockerfile
+        value: docker/Dockerfile.dev
+      - op: replace
+        path: /build/artifacts/0/docker/target
+        value: dev-api
+      - op: add
+        path: /deploy/helm/releases/2/setValues
+        value:
+          health.enabled: false
+
+      # dev web config
+      - op: replace
+        path: /build/artifacts/1/docker/dockerfile
+        value: docker/Dockerfile.dev
+      - op: replace
+        path: /build/artifacts/1/docker/target
+        value: dev-web
+      - op: add
+        path: /deploy/helm/releases/3/setValues
+        value:
+          health.enabled: false

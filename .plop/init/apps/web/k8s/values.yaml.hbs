@@ -1,0 +1,37 @@
+replicaCount: 1
+
+image:
+  repository: ""
+  pullPolicy: IfNotPresent
+  tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podLabels: {}
+
+service:
+  port: 8080
+
+health:
+  enabled: true
+  port: 9090
+
+gateway:
+  name: traefik-gateway
+  namespace: traefik
+  sectionName: web
+
+route:
+  hostname: app.{{kebabCase name}}.localhost
+
+tls:
+  namespace: traefik
+
+api:
+  host: 'https://api.{{kebabCase name}}.localhost:1337'
+
+geolocation:
+  # cache TTL in seconds
+  ttl: 1800

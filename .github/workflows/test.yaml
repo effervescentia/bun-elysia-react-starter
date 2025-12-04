@@ -25,3 +25,49 @@ jobs:
         run: bun run check:types
       - name: Run tests
         run: bun run test
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install GPG key
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+        run: |
+          echo -e "$GPG_KEY" | gpg --batch --import
+          ln -sf ~/.gnupg/pubring.kbx ~/.gnupg/pubring.gpg
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install sops
+        env:
+          SOPS_VERSION: 3.11.0
+        run: |
+          curl -Lo sops "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64"
+          sudo install sops /usr/local/bin/
+          sops decrypt k8s/secrets.yaml > /dev/null
+      - name: Install Helm secrets
+        env:
+          HELM_SECRETS_VERSION: 4.6.10
+        run: |
+          helm plugin install https://github.com/jkroepke/helm-secrets --version "v${HELM_SECRETS_VERSION}"
+          helm secrets decrypt k8s/secrets.yaml > /dev/null
+      - name: Install vals
+        env:
+          VALS_VERSION: 0.42.4
+        run: |
+          curl -L "https://github.com/helmfile/vals/releases/download/v${VALS_VERSION}/vals_${VALS_VERSION}_linux_amd64.tar.gz" | tar -xzv
+          sudo install vals /usr/local/bin/
+      - name: Start minikube
+        id: minikube
+        uses: medyagh/setup-minikube@latest
+        with:
+          minikube-version: 1.37.0
+      - name: Build and deploy images
+        uses: hiberbee/github-action-skaffold@1.27.0
+        with:
+          skaffold-version: 2.16.1
+          command: run
+      - name: Test helm charts
+        run: |
+          helm test web
+          helm test api
