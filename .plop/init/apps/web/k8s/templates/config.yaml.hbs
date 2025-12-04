@@ -8,4 +8,4 @@ data:
   PORT: \{{ .Values.service.port | quote }}
   PORT_HEALTH: \{{ .Values.health.port | quote }}
   
-  __app___API_HOST: \{{ .Values.api.host }}
+  {{envPrefix}}_API_HOST: \{{ .Values.api.host }}

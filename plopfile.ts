@@ -12,6 +12,12 @@ export default function (plop: NodePlopAPI) {
         name: 'name',
         message: 'project name',
       },
+      {
+        type: 'input',
+        name: 'envPrefix',
+        message: 'env variable prefix',
+        default: 'APP',
+      },
     ],
     actions: [
       {
@@ -19,6 +25,30 @@ export default function (plop: NodePlopAPI) {
         destination: '.',
         templateFiles: '.plop/init',
         base: '.plop/init',
+      },
+      {
+        type: 'modify',
+        path: 'apps/web/src/app/app.env.ts',
+        pattern: /__app__/,
+        template: '{{snakeCase name}}',
+      },
+      {
+        type: 'modify',
+        path: 'test/e2e/package.json',
+        pattern: /"@app\/test-e2e"/,
+        template: '"@{{kebabCase name}}/test-e2e"',
+      },
+      {
+        type: 'modify',
+        path: 'test/e2e/playwright.config.mts',
+        pattern: /__app__/,
+        template: '{{kebabCase name}}',
+      },
+      {
+        type: 'modify',
+        path: 'skaffold.yaml',
+        pattern: /__app__/,
+        template: '{{kebabCase name}}',
       },
       async () => {
         await fs.rm('.plop/init', { recursive: true, force: true });
@@ -94,6 +124,7 @@ export default function (plop: NodePlopAPI) {
         pattern: /<title>App<\/title>/,
         template: '<title>{{titleCase name}}</title>',
       },
+
       {
         type: 'modify',
         path: 'README.md',

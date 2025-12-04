@@ -2,7 +2,7 @@ import z from 'zod';
 
 declare global {
   interface Window {
-    vexenv?: unknown;
+    __app__env?: unknown;
   }
 }
 
@@ -27,7 +27,7 @@ class AppEnvironment {
     }
 
     try {
-      this.value = EnvironmentDTO.parse(window.vexenv);
+      this.value = EnvironmentDTO.parse(window.__app__env);
     } catch (err) {
       console.error('environment failed to initialize, subsequent attempts will be ignored');
       this.failed = true;
